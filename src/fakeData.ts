@@ -1,10 +1,10 @@
-import { IColumnTable, IMenuOrdersColumn, INumberTable } from "./common/constants/interface";
+import { IDrinks, IDrinksType, INumberTable, ITableHeadBill } from "./common/constants/interface";
 
-export const th: IColumnTable[] = [
+export const th: ITableHeadBill[] = [
     {
-        title: "Order",
-        dataIndex: "order",
-        key: "order",
+        title: "Drink",
+        dataIndex: "drink",
+        key: "drink",
     },
     {
         title: "Quantity",
@@ -20,46 +20,61 @@ export const th: IColumnTable[] = [
     },
 ];
 
-export const numberTables: Partial<INumberTable>[] = [
+export const drinksJuice: IDrinks[] = [
+    {
+        drinkId: 1,
+        drinkName: "juice orange",
+        isActive: false,
+        drinkTypeId: 1,
+    },
+    {
+        drinkId: 2,
+        drinkName: "juice watermelon",
+        isActive: false,
+        drinkTypeId: 1,
+    },
+    {
+        drinkId: 3,
+        drinkName: "egg coffee",
+        isActive: false,
+        drinkTypeId: 2,
+    }
+]
+
+
+export const drinksType: IDrinksType[] = [
+    {
+        drinkTypeId: 1,
+        drinkTypeName: "juice",
+        isActive: false,
+        drinks: JSON.parse(JSON.stringify(drinksJuice.filter(item => item.drinkTypeId === 1)))
+    },
+    {
+        drinkTypeId: 2,
+        drinkTypeName: "coffee",
+        isActive: false,
+        drinks: JSON.parse(JSON.stringify(drinksJuice.filter(item => item.drinkTypeId === 2)))
+    }
+];
+
+
+export const tables: INumberTable[] = [
     {
         tableId: 1,
-        number: 1,
+        tableName: "Number table 1",
+        drinksType: JSON.parse(JSON.stringify(drinksType)),
         isActive: false,
-        billId: null,
     },
     {
         tableId: 2,
-        number: 2,
+        tableName: "Number table 2",
+        drinksType: JSON.parse(JSON.stringify(drinksType)),
         isActive: false,
-        billId: null,
     },
     {
         tableId: 3,
-        number: 3,
+        tableName: "Number table 3",
+        drinksType: JSON.parse(JSON.stringify(drinksType)),
         isActive: false,
-        billId: null,
     },
 ];
-
-export const menuOrdersColumn: IMenuOrdersColumn[] = [
-    {
-        ordersColumnId: 1,
-        name: "juice",
-        tableId: null
-    }
-];
-
-export const menuColumn = [
-    {
-        menuColumnId: 1,
-        name: "juice orange",
-        ordersColumnId: 1,
-        tableId: null
-    },
-    {
-        menuColumnId: 2,
-        name: "juice watermelon",
-        ordersColumnId: 1,
-        tableId: null
-    }
-]

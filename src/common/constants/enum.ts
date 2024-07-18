@@ -1,9 +1,9 @@
-export enum OrderEventEnum {
-    ACTIVE_TABLE = "ACTIVE_TABLE",
-    DEACTIVE_TABLE = "DEACTIVE_TABLE",
+export enum TableActionEnum {
+    ACTIVE = "ACTIVE",
+    DEACTIVE = "DEACTIVE",
 }
 
-export enum MenuEnum {
-    SELECT = "SELECT",
-    CANCEL = "CANCEL"
-}
+export enum DrinkActionEnum {
+    ACTIVE = "ACTIVE",
+    DEACTIVE = "DEACTIVE",
+}   

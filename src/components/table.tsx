@@ -8,7 +8,7 @@ function TableBills({ db, th }: ITableBills<ObjectType<object>[]>) {
       dataSource={db}
       columns={th}
       pagination={false}
-      scroll={{ y: 200 }}
+      scroll={{ y: 120 }}
       bordered
       size="small"
     />

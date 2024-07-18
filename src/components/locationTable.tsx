@@ -1,49 +1,40 @@
 import { useContext } from "react";
-import { OrderContext } from "../contexts/orderContext";
-import { INumberTable } from "../common/constants/interface";
+import { TableContext } from "../contexts/TableContext";
 import { useSearchParams } from "react-router-dom";
 
 const NumberTable = ({
   numberTable,
-  isActive,
+  tableId,
 }: {
-  numberTable?: number;
-  isActive?: boolean;
+  numberTable: string;
+  tableId: number;
 }) => {
-  const [, setSearchParam] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
 
   const onChoose = () => {
-    setSearchParam({ billId: numberTable?.toString() ?? "" });
+    setSearchParams({ tableId: tableId.toString() });
   };
 
   return (
     <div
-      className={`location-table border-[1px] ${
-        isActive ? "border-green-600" : "border-slate-500"
-      } p-2 rounded cursor-pointer`}
+      className={`location-table border-[1px] p-2 rounded cursor-pointer`}
       onClick={onChoose}
     >
-      <p
-        className={`text-sm ${isActive ? "text-green-600" : "text-slate-500"}`}
-      >
-        Number table: {numberTable}
-      </p>
+      <p className={`text-sm `}>{numberTable}</p>
     </div>
   );
 };
 
 export default function LocationTable() {
-  const orderContext: Partial<INumberTable>[] = useContext(OrderContext);
+  const tableContext = useContext(TableContext);
 
-  const tables = orderContext.map((table) => {
-    return (
-      <NumberTable
-        numberTable={table.number}
-        isActive={table.isActive}
-        key={table.tableId}
-      />
-    );
-  });
+  const tables = tableContext.map((table) => (
+    <NumberTable
+      numberTable={table.tableName}
+      tableId={table.tableId}
+      key={table.tableId}
+    />
+  ));
 
   return <div className="flex flex-wrap gap-3 px-2 mt-2">{tables}</div>;
 }

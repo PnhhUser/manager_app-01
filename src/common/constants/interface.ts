@@ -1,6 +1,6 @@
 import { MouseEventHandler, ReactNode } from "react";
 import { NumberTableType } from "./type";
-import { MenuEnum, OrderEventEnum } from "./enum";
+import { TableActionEnum, DrinkActionEnum } from "./enum";
 
 export interface ITable<T> {
     db: T;
@@ -10,6 +10,18 @@ export interface ITable<T> {
 export interface ITableUser<T> extends ITable<T> { }
 export interface ITableBills<T> extends ITable<T> { }
 
+export interface IAction<T> {
+    type?: T,
+}
+
+export interface IChildren {
+    children: ReactNode;
+}
+
+export interface ITitle {
+    title?: string;
+    number?: NumberTableType;
+}
 
 export interface IPropsNav {
     toggleNav: MouseEventHandler<HTMLElement>;
@@ -23,35 +35,35 @@ export interface IPropsNavLink {
     icon: ReactNode;
 }
 
-export interface ITitle {
-    title?: string;
-    number?: NumberTableType;
+export interface ITableAction extends IAction<TableActionEnum> {
+
 }
 
-export interface IAction<T> {
-    type?: T,
-}
-
-export interface IOrderAction extends IAction<OrderEventEnum> {
-    tableId: number;
+export interface IOrderAction extends IAction<DrinkActionEnum> {
     isActive: boolean;
-    isDeactive: boolean;
-}
-
-export interface IMenuAction extends IAction<MenuEnum> {
-    tableId: number | null;
-    ordersColumnId: number
+    drinkTypeId: number;
+    tableId: number;
 }
 
 export interface INumberTable {
     tableId: number;
-    number: number;
-    isActive?: boolean;
-    billId: number | null;
+    tableName: string;
+    drinksType: IDrinksType[];
+    isActive: boolean;
 }
 
-export interface IDataOrder<T> {
-    data: T
+export interface IDrinksType {
+    drinkTypeId: number;
+    drinkTypeName: string;
+    isActive: boolean;
+    drinks: IDrinks[];
+}
+
+export interface IDrinks {
+    drinkId: number;
+    drinkName: string;
+    isActive: boolean;
+    drinkTypeId: number;
 }
 
 export interface IBtnDefault {
@@ -61,19 +73,10 @@ export interface IBtnDefault {
     onEvent: MouseEventHandler;
 }
 
-export interface IColumnTable {
+export interface ITableHeadBill {
     title: string,
     dataIndex: string,
     key: string,
     width?: string
 }
 
-export interface IMenuOrdersColumn {
-    ordersColumnId: number;
-    name: string;
-    tableId: number | null;
-}
-
-export interface IChildren {
-    children: ReactNode;
-}

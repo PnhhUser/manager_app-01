@@ -1,66 +1,94 @@
-import { useSearchParams } from "react-router-dom";
-import { TitleText } from "./title";
 import { useContext } from "react";
-import { MenuContext, MenuDispatch } from "../contexts/menuContext";
-import { MenuEnum } from "../common/constants/enum";
+import { TitleText } from "./title";
+import { DrinkContext, DrinkDispatch } from "../contexts/DrinkContext";
+import { DrinkActionEnum } from "../common/constants/enum";
+import { useSearchParams } from "react-router-dom";
+import { REDIRECT_TO_BILL } from "../common/constants/init";
 
 export default function Menu() {
-  const [searchParams] = useSearchParams();
-  const billId = searchParams.get("billId");
-  const menuContext = useContext(MenuContext);
-  const menuDispatch = useContext(MenuDispatch);
+  const drinkContext = useContext(DrinkContext);
+  const drinkDispatch = useContext(DrinkDispatch);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tableId = Number(searchParams.get(REDIRECT_TO_BILL));
+  const drinkTypeId = Number(searchParams.get("drinkTypeId"));
 
-  const onSelectOrder = (id: number) => {
-    const findId = menuContext.find((item) => item.ordersColumnId === id);
+  const drinks = drinkContext.find((drink) => drink.tableId === tableId)!;
 
-    if (!findId?.tableId) {
-      menuDispatch({
-        ordersColumnId: id,
-        tableId: Number(billId),
-        type: MenuEnum.SELECT,
+  const onSelectOrder = (drinkTypeId: number) => {
+    const drinkType = drinks.drinksType.find(
+      (drinkType) => drinkType.drinkTypeId === drinkTypeId
+    )!;
+
+    if (!drinkType.isActive) {
+      drinkDispatch({
+        type: DrinkActionEnum.ACTIVE,
+        isActive: true,
+        drinkTypeId: drinkTypeId,
+        tableId: tableId,
+      });
+
+      setSearchParams({
+        tableId: tableId.toString(),
+        drinkTypeId: drinkType.drinkTypeId.toString(),
       });
     } else {
-      menuDispatch({
-        ordersColumnId: id,
-        tableId: null,
-        type: MenuEnum.CANCEL,
+      drinkDispatch({
+        type: DrinkActionEnum.DEACTIVE,
+        isActive: false,
+        drinkTypeId: drinkTypeId,
+        tableId: tableId,
       });
+
+      setSearchParams({ tableId: tableId.toString() });
     }
   };
+
+  const columnDrinksType = drinks?.drinksType.map((drinkType) => (
+    <p
+      key={drinkType.drinkTypeId}
+      className={`text-sm p-2 cursor-pointer capitalize ${
+        drinkType.isActive ? "bg-sky-300 text-white" : "hover:bg-gray-100"
+      }`}
+      onClick={() => onSelectOrder(drinkType.drinkTypeId)}
+    >
+      {drinkType.drinkTypeName}
+    </p>
+  ));
+
+  const columnDrinks = drinks?.drinksType.map((drinkType) => {
+    if (drinkType.isActive && drinkType.drinkTypeId === drinkTypeId) {
+      return drinkType.drinks.map((drink) => {
+        return (
+          <p
+            key={drink.drinkId}
+            className={`text-sm p-2 cursor-pointer capitalize ${
+              drink.isActive ? "bg-sky-300 text-white" : "hover:bg-gray-100"
+            }`}
+          >
+            {drink.drinkName}
+          </p>
+        );
+      });
+    }
+  });
 
   return (
     <>
       <TitleText title="Menu" />
-      {billId ? (
-        <div className="flex px-2 gap-5 lg:h-[500px] h-[180px]">
-          <div className="w-[35%] h-full">
-            <p className="text-sm mb-1">Orders</p>
-            {menuContext.map((item) => {
-              return (
-                <div
-                  className="w-full h-full border-[1px] border-slate-300 py-2 rounded"
-                  key={item.ordersColumnId}
-                >
-                  <p
-                    className={`text-sm p-2 cursor-pointer ${
-                      localStorage.getItem("orders")
-                        ? "bg-sky-300 text-white"
-                        : "hover:bg-gray-100"
-                    }`}
-                    onClick={() => onSelectOrder(item.ordersColumnId)}
-                  >
-                    {item.name}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-          <div className="w-[35%] h-full">
-            <p className="text-sm mb-1">Menu</p>
-            <div className="w-full h-full border-[1px] border-slate-300 py-2 rounded"></div>
+      <div className="flex px-2 gap-5 lg:h-[500px] h-[180px]">
+        <div className="w-[35%] h-full">
+          <p className="text-sm mb-1">Drinks type</p>
+          <div className="w-full h-full border-[1px] border-slate-300 py-2 rounded">
+            {columnDrinksType}
           </div>
         </div>
-      ) : null}
+        <div className="w-[35%] h-full">
+          <p className="text-sm mb-1">Drinks</p>
+          <div className="w-full h-full border-[1px] border-slate-300 py-2 rounded">
+            {columnDrinks}
+          </div>
+        </div>
+      </div>
     </>
   );
 }
