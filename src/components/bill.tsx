@@ -4,16 +4,28 @@ import { TableBills } from "./table";
 import { th } from "../fakeData";
 import { useSearchParams } from "react-router-dom";
 import { REDIRECT_TO_BILL } from "../common/constants/init";
+import { DrinkActionEnum } from "../common/constants/enum";
+import { useContext } from "react";
+import { DrinkDispatch } from "../contexts/DrinkContext";
 
 export default function Bill() {
   const [searchParams, setSearchParams] = useSearchParams();
   const tableId = searchParams.get(REDIRECT_TO_BILL);
+  const drinkDispatch = useContext(DrinkDispatch);
+  const drinkTypeId = Number(searchParams.get("drinkTypeId"));
 
   const onActive = () => {};
 
   const onDeactive = () => {};
 
   const onCancel = () => {
+    drinkDispatch({
+      type: DrinkActionEnum.DEACTIVE,
+      isActive: false,
+      drinkTypeId: drinkTypeId,
+      tableId: Number(tableId),
+    });
+
     setSearchParams();
   };
 

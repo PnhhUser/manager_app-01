@@ -43,6 +43,7 @@ export interface IOrderAction extends IAction<DrinkActionEnum> {
     isActive: boolean;
     drinkTypeId: number;
     tableId: number;
+    drinkId?: number;
 }
 
 export interface INumberTable {

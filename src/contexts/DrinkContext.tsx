@@ -27,9 +27,21 @@ function drinkReducer(tables: INumberTable[], action: IOrderAction) {
     case DrinkActionEnum.ACTIVE: {
       tables
         .find((table) => table.tableId === action.tableId)
-        ?.drinksType.map((drink) => {
-          if (drink.drinkTypeId === action.drinkTypeId) {
-            drink.isActive = action.isActive;
+        ?.drinksType.map((drinkType) => {
+          if (drinkType.drinkTypeId === action.drinkTypeId) {
+            // types
+            drinkType.isActive = action.isActive;
+
+            // drink
+            const drinks = drinkType.drinks.find(
+              (drink) => drink.drinkId === action.drinkId
+            );
+
+            if (drinks) {
+              drinks.isActive = action.isActive;
+            }
+          } else {
+            drinkType.isActive = !action.isActive;
           }
         });
 
@@ -39,9 +51,20 @@ function drinkReducer(tables: INumberTable[], action: IOrderAction) {
     case DrinkActionEnum.DEACTIVE: {
       tables
         .find((table) => table.tableId === action.tableId)
-        ?.drinksType.map((drink) => {
-          if (drink.drinkTypeId === action.drinkTypeId) {
-            drink.isActive = action.isActive;
+        ?.drinksType.map((drinkType) => {
+          if (drinkType.drinkTypeId === action.drinkTypeId) {
+            // type
+            drinkType.isActive = action.isActive;
+
+            // drinks
+            const drinks = drinkType.drinks.find(
+              (drink) => drink.drinkId === action.drinkId
+            );
+
+            if (drinks) {
+              drinks.isActive = action.isActive;
+              drinkType.isActive = true;
+            }
           }
         });
       return [...tables];

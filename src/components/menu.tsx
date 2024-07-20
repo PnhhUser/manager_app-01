@@ -12,10 +12,11 @@ export default function Menu() {
   const tableId = Number(searchParams.get(REDIRECT_TO_BILL));
   const drinkTypeId = Number(searchParams.get("drinkTypeId"));
 
-  const drinks = drinkContext.find((drink) => drink.tableId === tableId)!;
+  const tables = drinkContext.find((drink) => drink.tableId === tableId)!;
 
-  const onSelectOrder = (drinkTypeId: number) => {
-    const drinkType = drinks.drinksType.find(
+  // event selected drinks type
+  const onDrinkType = (drinkTypeId: number) => {
+    const drinkType = tables.drinksType.find(
       (drinkType) => drinkType.drinkTypeId === drinkTypeId
     )!;
 
@@ -43,19 +44,52 @@ export default function Menu() {
     }
   };
 
-  const columnDrinksType = drinks?.drinksType.map((drinkType) => (
+  // event selected drinks
+  const onDrinks = (drinkId: number) => {
+    const drinkType = tables.drinksType.find(
+      (drinkType) => drinkType.drinkTypeId === drinkTypeId
+    )!;
+
+    const drink = drinkType.drinks.find((drink) => drink.drinkId === drinkId)!;
+
+    if (!drink.isActive) {
+      drinkDispatch({
+        type: DrinkActionEnum.ACTIVE,
+        isActive: true,
+        drinkTypeId: drinkTypeId,
+        tableId: tableId,
+        drinkId: drinkId,
+      });
+
+      setSearchParams({
+        tableId: tableId.toString(),
+        drinkTypeId: drinkType.drinkTypeId.toString(),
+        drinkId: drinkId.toString(),
+      });
+    } else {
+      drinkDispatch({
+        type: DrinkActionEnum.DEACTIVE,
+        isActive: false,
+        drinkTypeId: drinkTypeId,
+        tableId: tableId,
+        drinkId: drinkId,
+      });
+    }
+  };
+
+  const columnDrinksType = tables?.drinksType.map((drinkType) => (
     <p
       key={drinkType.drinkTypeId}
       className={`text-sm p-2 cursor-pointer capitalize ${
         drinkType.isActive ? "bg-sky-300 text-white" : "hover:bg-gray-100"
       }`}
-      onClick={() => onSelectOrder(drinkType.drinkTypeId)}
+      onClick={() => onDrinkType(drinkType.drinkTypeId)}
     >
       {drinkType.drinkTypeName}
     </p>
   ));
 
-  const columnDrinks = drinks?.drinksType.map((drinkType) => {
+  const columnDrinks = tables?.drinksType.map((drinkType) => {
     if (drinkType.isActive && drinkType.drinkTypeId === drinkTypeId) {
       return drinkType.drinks.map((drink) => {
         return (
@@ -64,6 +98,7 @@ export default function Menu() {
             className={`text-sm p-2 cursor-pointer capitalize ${
               drink.isActive ? "bg-sky-300 text-white" : "hover:bg-gray-100"
             }`}
+            onClick={() => onDrinks(drink.drinkId)}
           >
             {drink.drinkName}
           </p>
