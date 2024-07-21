@@ -1,111 +1,41 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { TitleText } from "./title";
 import { DrinkContext, DrinkDispatch } from "../contexts/DrinkContext";
+
+import { useParams } from "react-router-dom";
 import { DrinkActionEnum } from "../common/constants/enum";
-import { useSearchParams } from "react-router-dom";
-import { REDIRECT_TO_BILL } from "../common/constants/init";
 
 export default function Menu() {
+  const { tableId } = useParams();
   const drinkContext = useContext(DrinkContext);
+
+  // console.log(drinkContext);
+
+  const [typeId, setTypeId] = useState(0);
   const drinkDispatch = useContext(DrinkDispatch);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const tableId = Number(searchParams.get(REDIRECT_TO_BILL));
-  const drinkTypeId = Number(searchParams.get("drinkTypeId"));
 
-  const tables = drinkContext.find((drink) => drink.tableId === tableId)!;
+  const columnsType = drinkContext.find(
+    (drink) => drink.tableId === Number(tableId)
+  )?.drinksType;
 
-  // event selected drinks type
-  const onDrinkType = (drinkTypeId: number) => {
-    const drinkType = tables.drinksType.find(
-      (drinkType) => drinkType.drinkTypeId === drinkTypeId
-    )!;
+  const columnsDrink = columnsType
+    ?.filter((drinkType) => drinkType.drinkTypeId === typeId)
+    .find((drink) => drink.drinks)?.drinks;
 
-    if (!drinkType.isActive) {
-      drinkDispatch({
-        type: DrinkActionEnum.ACTIVE,
-        isActive: true,
-        drinkTypeId: drinkTypeId,
-        tableId: tableId,
-      });
-
-      setSearchParams({
-        tableId: tableId.toString(),
-        drinkTypeId: drinkType.drinkTypeId.toString(),
-      });
-    } else {
-      drinkDispatch({
-        type: DrinkActionEnum.DEACTIVE,
-        isActive: false,
-        drinkTypeId: drinkTypeId,
-        tableId: tableId,
-      });
-
-      setSearchParams({ tableId: tableId.toString() });
-    }
+  const onToggleTypes = (drinkTypeId: number) => {
+    setTypeId(drinkTypeId);
   };
 
-  // event selected drinks
-  const onDrinks = (drinkId: number) => {
-    const drinkType = tables.drinksType.find(
-      (drinkType) => drinkType.drinkTypeId === drinkTypeId
-    )!;
-
-    const drink = drinkType.drinks.find((drink) => drink.drinkId === drinkId)!;
-
-    if (!drink.isActive) {
+  const onToggleDrinks = (drinkId: number, isActive: boolean) => {
+    if (tableId) {
       drinkDispatch({
-        type: DrinkActionEnum.ACTIVE,
-        isActive: true,
-        drinkTypeId: drinkTypeId,
-        tableId: tableId,
+        type: DrinkActionEnum.TOGGLE_DRINK,
         drinkId: drinkId,
-      });
-
-      setSearchParams({
-        tableId: tableId.toString(),
-        drinkTypeId: drinkType.drinkTypeId.toString(),
-        drinkId: drinkId.toString(),
-      });
-    } else {
-      drinkDispatch({
-        type: DrinkActionEnum.DEACTIVE,
-        isActive: false,
-        drinkTypeId: drinkTypeId,
-        tableId: tableId,
-        drinkId: drinkId,
+        tableId: Number(tableId),
+        isActive: !isActive,
       });
     }
   };
-
-  const columnDrinksType = tables?.drinksType.map((drinkType) => (
-    <p
-      key={drinkType.drinkTypeId}
-      className={`text-sm p-2 cursor-pointer capitalize ${
-        drinkType.isActive ? "bg-sky-300 text-white" : "hover:bg-gray-100"
-      }`}
-      onClick={() => onDrinkType(drinkType.drinkTypeId)}
-    >
-      {drinkType.drinkTypeName}
-    </p>
-  ));
-
-  const columnDrinks = tables?.drinksType.map((drinkType) => {
-    if (drinkType.isActive && drinkType.drinkTypeId === drinkTypeId) {
-      return drinkType.drinks.map((drink) => {
-        return (
-          <p
-            key={drink.drinkId}
-            className={`text-sm p-2 cursor-pointer capitalize ${
-              drink.isActive ? "bg-sky-300 text-white" : "hover:bg-gray-100"
-            }`}
-            onClick={() => onDrinks(drink.drinkId)}
-          >
-            {drink.drinkName}
-          </p>
-        );
-      });
-    }
-  });
 
   return (
     <>
@@ -114,13 +44,37 @@ export default function Menu() {
         <div className="w-[35%] h-full">
           <p className="text-sm mb-1">Drinks type</p>
           <div className="w-full h-full border-[1px] border-slate-300 py-2 rounded">
-            {columnDrinksType}
+            {columnsType?.map((drinkType) => (
+              <p
+                className={`px-3 py-1 border-[1px] ${
+                  drinkType.isActive
+                    ? "bg-sky-300 text-white"
+                    : "hover:bg-slate-100"
+                } border-white cursor-pointer`}
+                key={drinkType.drinkTypeId}
+                onClick={() => onToggleTypes(drinkType.drinkTypeId)}
+              >
+                {drinkType.drinkTypeName}
+              </p>
+            ))}
           </div>
         </div>
         <div className="w-[35%] h-full">
           <p className="text-sm mb-1">Drinks</p>
           <div className="w-full h-full border-[1px] border-slate-300 py-2 rounded">
-            {columnDrinks}
+            {columnsDrink?.map((drink) => (
+              <p
+                className={`px-3 py-1 border-[1px] ${
+                  drink.isActive
+                    ? "bg-sky-300 text-white"
+                    : "hover:bg-slate-100"
+                } border-white cursor-pointer`}
+                key={drink.drinkId}
+                onClick={() => onToggleDrinks(drink.drinkId, drink.isActive)}
+              >
+                {drink.drinkName}
+              </p>
+            ))}
           </div>
         </div>
       </div>

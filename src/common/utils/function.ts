@@ -16,6 +16,18 @@ const convertToVietnamese = (timeString: string): string => {
     return `${hours}:${minutes}:${seconds} ${vietnameseAmPm}`;
 }
 
+const getLocal = (key: string): string | null => {
 
+    return localStorage.getItem(key);
+}
 
-export { convertToVietnamese }
+const setLocal = (key: string, data: string): void => {
+    localStorage.setItem(key, data);
+}
+
+const removeLocal = (key: string): string | null => {
+
+    return localStorage.getItem(key);
+}
+
+export { convertToVietnamese, getLocal, setLocal, removeLocal }

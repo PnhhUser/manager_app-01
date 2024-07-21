@@ -54,6 +54,12 @@ export const drinksType: IDrinksType[] = [
         drinkTypeName: "coffee",
         isActive: false,
         drinks: JSON.parse(JSON.stringify(drinksJuice.filter(item => item.drinkTypeId === 2)))
+    },
+    {
+        drinkTypeId: 3,
+        drinkTypeName: "tea",
+        isActive: false,
+        drinks: []
     }
 ];
 

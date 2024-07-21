@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { TableContext } from "../contexts/TableContext";
-import { useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { LOCATION_TABLE_PATH } from "../common/constants/path";
 
 const NumberTable = ({
   numberTable,
@@ -9,19 +10,13 @@ const NumberTable = ({
   numberTable: string;
   tableId: number;
 }) => {
-  const [, setSearchParams] = useSearchParams();
-
-  const onChoose = () => {
-    setSearchParams({ tableId: tableId.toString() });
-  };
-
   return (
-    <div
-      className={`location-table border-[1px] p-2 rounded cursor-pointer`}
-      onClick={onChoose}
+    <Link
+      to={`${LOCATION_TABLE_PATH}/${tableId}`}
+      className={`text-sm location-table border-[1px] p-2 rounded cursor-pointer`}
     >
-      <p className={`text-sm `}>{numberTable}</p>
-    </div>
+      {numberTable}
+    </Link>
   );
 };
 

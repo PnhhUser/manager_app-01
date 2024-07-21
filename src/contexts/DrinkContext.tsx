@@ -5,7 +5,7 @@ import {
   IOrderAction,
 } from "../common/constants/interface";
 import { DrinkActionEnum } from "../common/constants/enum";
-import { tables } from "../fakeData";
+import { drinksJuice, tables } from "../fakeData";
 
 export const DrinkContext = createContext<INumberTable[]>(tables);
 export const DrinkDispatch = createContext<Dispatch<IOrderAction>>(() => {});
@@ -24,49 +24,41 @@ export const DrinkProvider = ({ children }: IChildren) => {
 
 function drinkReducer(tables: INumberTable[], action: IOrderAction) {
   switch (action.type) {
-    case DrinkActionEnum.ACTIVE: {
-      tables
-        .find((table) => table.tableId === action.tableId)
-        ?.drinksType.map((drinkType) => {
-          if (drinkType.drinkTypeId === action.drinkTypeId) {
-            // types
-            drinkType.isActive = action.isActive;
+    case DrinkActionEnum.TOGGLE_DRINK: {
+      const table = tables.find((t) => t.tableId === action.tableId)!;
 
-            // drink
-            const drinks = drinkType.drinks.find(
-              (drink) => drink.drinkId === action.drinkId
-            );
+      const drink = drinksJuice.find(
+        (drink) => drink.drinkId === action.drinkId
+      )!;
+      // drink
+      const drinks = drinksJuice
+        .map((item) => {
+          if (item.drinkId === action.drinkId) {
+            item.isActive = action.isActive;
+          }
+          return item;
+        })
+        .filter((item) => item.drinkTypeId === drink.drinkTypeId);
 
-            if (drinks) {
-              drinks.isActive = action.isActive;
-            }
+      table.drinksType.map((item) => {
+        if (item.drinkTypeId === drink.drinkTypeId) {
+          item.drinks = drinks;
+        }
+      });
+
+      // type
+      table.drinksType.map((item) => {
+        if (item.drinkTypeId === drink.drinkTypeId) {
+          if (
+            item.drinks.filter((item) => item.isActive === true).length === 0
+          ) {
+            item.isActive = false;
           } else {
-            drinkType.isActive = !action.isActive;
+            item.isActive = true;
           }
-        });
+        }
+      });
 
-      return [...tables];
-    }
-
-    case DrinkActionEnum.DEACTIVE: {
-      tables
-        .find((table) => table.tableId === action.tableId)
-        ?.drinksType.map((drinkType) => {
-          if (drinkType.drinkTypeId === action.drinkTypeId) {
-            // type
-            drinkType.isActive = action.isActive;
-
-            // drinks
-            const drinks = drinkType.drinks.find(
-              (drink) => drink.drinkId === action.drinkId
-            );
-
-            if (drinks) {
-              drinks.isActive = action.isActive;
-              drinkType.isActive = true;
-            }
-          }
-        });
       return [...tables];
     }
 

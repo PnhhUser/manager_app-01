@@ -14,6 +14,10 @@ function Router() {
       <>
         <Route path="/" element={<App />}>
           <Route path={LOCATION_TABLE_PATH} element={<Dashboard />} />
+          <Route
+            path={`${LOCATION_TABLE_PATH}/:tableId`}
+            element={<Dashboard />}
+          />
         </Route>
       </>
     )

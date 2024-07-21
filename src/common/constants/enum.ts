@@ -4,6 +4,5 @@ export enum TableActionEnum {
 }
 
 export enum DrinkActionEnum {
-    ACTIVE = "ACTIVE",
-    DEACTIVE = "DEACTIVE",
+    TOGGLE_DRINK = "TOGGLE_DRINK"
 }   

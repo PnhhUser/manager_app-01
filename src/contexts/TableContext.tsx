@@ -24,11 +24,11 @@ export const TableProvider = ({ children }: IChildren) => {
 
 function tableReduce(table: INumberTable[], action: ITableAction) {
   switch (action.type) {
-    case TableActionEnum.ACTIVE_TABLE: {
+    case TableActionEnum.ACTIVE: {
       return [...table];
     }
 
-    case TableActionEnum.DEACTIVE_TABLE: {
+    case TableActionEnum.DEACTIVE: {
       return [...table];
     }
 
