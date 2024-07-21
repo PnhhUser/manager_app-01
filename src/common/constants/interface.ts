@@ -64,6 +64,8 @@ export interface IDrinks {
     drinkName: string;
     isActive: boolean;
     drinkTypeId: number;
+    prices: string;
+    quantity: number;
 }
 
 export interface IBtnDefault {
@@ -79,4 +81,3 @@ export interface ITableHeadBill {
     key: string,
     width?: string
 }
-

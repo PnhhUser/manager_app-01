@@ -26,18 +26,24 @@ export const drinksJuice: IDrinks[] = [
         drinkName: "juice orange",
         isActive: false,
         drinkTypeId: 1,
+        prices: "16.000",
+        quantity: 0
     },
     {
         drinkId: 2,
         drinkName: "juice watermelon",
         isActive: false,
         drinkTypeId: 1,
+        prices: "16.000",
+        quantity: 0
     },
     {
         drinkId: 3,
         drinkName: "egg coffee",
         isActive: false,
         drinkTypeId: 2,
+        prices: "16.000",
+        quantity: 0
     }
 ]
 
